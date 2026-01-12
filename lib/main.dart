@@ -11,7 +11,7 @@ class TicketFixApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TicketFix',
+      title: 'TiketFix',
       debugShowCheckedModeBanner: false,
       initialRoute: AppRoutes.login,
       routes: {
