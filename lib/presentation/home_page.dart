@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tiketfix/presentation/pages/widgets/controllers/movie_card.dart';
+import 'package:tiketfix/core/app_routes.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -14,7 +15,7 @@ class HomePage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/login');
+              Navigator.pushReplacementNamed(context, AppRoutes.login);
             },
           )
         ],
