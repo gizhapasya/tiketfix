@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tiketfix/core/app_routes.dart';
-import 'package:tiketfix/presentation/pages/widgets/controllers/login_page.dart';
-import 'package:tiketfix/presentation/home_page.dart';
+import 'package:tiketfix/presentation/pages/login_page.dart';
+import 'package:tiketfix/presentation/pages/home_page.dart';
 void main() {
   runApp(const TicketFixApp());
 }
