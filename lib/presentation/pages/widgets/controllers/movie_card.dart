@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tiketfix/domain/entities/repositories/usecases/movie.dart';
 
 class MovieCard extends StatelessWidget {
   final String title;
