@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiketfix/domain/entities/repositories/usecases/movie.dart';
 
 class MovieCard extends StatelessWidget {
   final String title;
@@ -33,8 +34,36 @@ class MovieCard extends StatelessWidget {
               )
             : null,
         onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Pilih film: $title')),
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Scaffold(
+                appBar: AppBar(title: Text(title)),
+                body: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Genre: $genre', style: const TextStyle(fontSize: 16)),
+                      if (duration != null) ...[
+                        const SizedBox(height: 8),
+                        Text('Duration: $duration'),
+                      ],
+                      if (rating != null) ...[
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Icon(Icons.star, size: 16, color: Colors.orange),
+                            const SizedBox(width: 6),
+                            Text(rating!),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
           );
         },
       ),
