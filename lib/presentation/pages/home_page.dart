@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tiketfix/presentation/pages/widgets/controllers/movie_card.dart';
 import 'package:tiketfix/core/app_routes.dart';
-import 'package:tiketfix/data/models/detasources/repositories/dummy/movie_dummy.dart';
+import 'package:tiketfix/data/models/datasources/repositories/dummy/movie_dummy.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

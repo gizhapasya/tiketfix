@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiketfix/data/models/datasources/user_local_storage.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -9,6 +10,8 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -21,30 +24,36 @@ class _RegisterPageState extends State<RegisterPage> {
           child: Column(
             children: [
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Nama'),
-                validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
-              ),
-              TextFormField(
+                controller: emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
-                validator: (v) => !v!.contains('@') ? 'Email tidak valid' : null,
+                validator: (v) =>
+                    !v!.contains('@') ? 'Email tidak valid' : null,
               ),
               TextFormField(
+                controller: passwordController,
                 decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
-                validator: (v) => v!.length < 6 ? 'Min 6 karakter' : null,
+                validator: (v) =>
+                    v!.length < 6 ? 'Minimal 6 karakter' : null,
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
+                    await UserLocalStorage.saveUser(
+                      emailController.text,
+                      passwordController.text,
+                    );
+
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Registrasi berhasil')),
+                      const SnackBar(
+                          content: Text('Registrasi berhasil')),
                     );
                     Navigator.pop(context);
                   }
                 },
                 child: const Text('Daftar'),
-              )
+              ),
             ],
           ),
         ),

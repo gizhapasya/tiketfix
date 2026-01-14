@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tiketfix/core/app_routes.dart';
-import 'package:tiketfix/presentation/pages/login_page.dart';
-import 'package:tiketfix/presentation/pages/home_page.dart';
+import 'presentation/pages/login_page.dart';
+
 void main() {
   runApp(const TicketFixApp());
 }
@@ -11,14 +10,9 @@ class TicketFixApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'TiketFix',
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.login,
-      routes: {
-        AppRoutes.login: (context) => const LoginPage(),
-        AppRoutes.home: (context) => const HomePage(),
-      },
+      home: LoginPage(),
     );
   }
 }
