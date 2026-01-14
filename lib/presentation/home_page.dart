@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tiketfix/presentation/pages/widgets/controllers/movie_card.dart';
 import 'package:tiketfix/core/app_routes.dart';
+import 'package:tiketfix/data/models/detasources/repositories/dummy/movie_dummy.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -33,23 +34,17 @@ class HomePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-
             Expanded(
-              child: ListView(
-                children: const [
-                  MovieCard(
-                    title: 'Avengers: End Game',
-                    genre: 'Action, Sci-Fi',
-                  ),
-                  MovieCard(
-                    title: 'Dilan 1990',
-                    genre: 'Romance',
-                  ),
-                  MovieCard(
-                    title: 'Pengabdi Setan',
-                    genre: 'Horror',
-                  ),
-                ],
+              child: ListView.builder(
+                itemCount: movieList.length,
+                itemBuilder: (context, index) {
+                  return MovieCard(
+                    title: movieList[index].title,
+                    genre: movieList[index].genre,
+                    duration: movieList[index].duration,
+                    rating: movieList[index].rating,
+                  );
+                },
               ),
             ),
           ],
