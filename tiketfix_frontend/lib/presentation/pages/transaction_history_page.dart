@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../data/datasources/order_remote_datasource.dart';
 import '../../data/models/transaction_model.dart';
 import 'transaction_detail_page.dart';
+import '../../core/utils/pdf_generator.dart';
 
 
 class TransactionHistoryPage extends StatefulWidget {
@@ -13,6 +14,7 @@ class TransactionHistoryPage extends StatefulWidget {
 
 class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
   late Future<List<TransactionModel>> _historyFuture;
+  List<TransactionModel>? _loadedTransactions; // Cache for export
 
   @override
   void initState() {
@@ -22,13 +24,40 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
 
   Future<List<TransactionModel>> _fetchHistory() async {
     final data = await OrderRemoteDataSource().getTransactionHistory();
-    return data.map((e) => TransactionModel.fromJson(e)).toList();
+    // Cache data
+    final list = data.map((e) => TransactionModel.fromJson(e)).toList();
+    _loadedTransactions = list;
+    return list;
+  }
+  
+  Future<void> _exportPdf() async {
+     if (_loadedTransactions == null || _loadedTransactions!.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("No data to export")));
+        return;
+     }
+     
+     try {
+       await PdfGenerator.generateAndSave(_loadedTransactions!);
+       // Success message handled by opening file usually, but showing snackbar is good
+       // OpenFile opens it system-wide.
+     } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Export failed: $e")));
+     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("My Tickets")),
+      appBar: AppBar(
+        title: const Text("My Tickets"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf),
+            tooltip: 'Export PDF',
+            onPressed: _exportPdf,
+          )
+        ],
+      ),
       body: FutureBuilder<List<TransactionModel>>(
         future: _historyFuture,
         builder: (context, snapshot) {
