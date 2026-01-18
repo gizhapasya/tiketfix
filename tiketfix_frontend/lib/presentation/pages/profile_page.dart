@@ -48,22 +48,32 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _pickImage(ImageSource source) async {
     try {
-      final XFile? image = await _picker.pickImage(source: source);
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        maxWidth: 1024, // Resize to avoid huge uploads
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+      
       if (image != null && _username != null) {
         setState(() => _isLoading = true);
         final result = await _authDataSource.uploadProfilePicture(_username!, image.path);
         
+        if (!mounted) return;
+
         if (result['success'] == true) {
-           _loadProfile(); // Reload to get new URL
+           await _loadProfile(); // Await ensures state update before snackbar
            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Profile picture updated!")));
         } else {
            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result['message'] ?? "Upload failed")));
         }
       }
     } catch (e) {
-       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+       if (!mounted) return;
+       // Often generic error implies permission or path issue
+       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to pick image: $e")));
     } finally {
-       setState(() => _isLoading = false);
+       if (mounted) setState(() => _isLoading = false);
     }
   }
 
