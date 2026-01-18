@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:tiketfix/core/app_routes.dart';
 import '../../../../data/datasources/auth_remote_datasource.dart';
 
-
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _authDataSource = AuthRemoteDataSource();
   bool _isLoading = false;
 
-  Future<void> _handleLogin() async {
+  Future<void> _handleRegister() async {
     setState(() => _isLoading = true);
     try {
-      final result = await _authDataSource.login(
+      final result = await _authDataSource.register(
         _usernameController.text,
         _passwordController.text,
       );
@@ -28,13 +26,13 @@ class _LoginPageState extends State<LoginPage> {
 
       if (result['success'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['message'] ?? 'Login Successful')),
+          SnackBar(content: Text(result['message'] ?? 'Registration Successful')),
         );
-        Navigator.pushReplacementNamed(context, AppRoutes.home);
+        Navigator.pop(context); // Go back to Login Page
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result['message'] ?? 'Login failed'),
+            content: Text(result['message'] ?? 'Registration failed'),
             backgroundColor: Colors.red,
           ),
         );
@@ -55,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: const Text('Register')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -75,18 +73,11 @@ class _LoginPageState extends State<LoginPage> {
               width: double.infinity,
               height: 48,
               child: ElevatedButton(
-                onPressed: _isLoading ? null : _handleLogin,
+                onPressed: _isLoading ? null : _handleRegister,
                 child: _isLoading
                     ? const CircularProgressIndicator()
-                    : const Text('Login'),
+                    : const Text('Register'),
               ),
-            ),
-            const SizedBox(height: 16),
-            TextButton(
-              onPressed: () {
-                Navigator.pushNamed(context, AppRoutes.register);
-              },
-              child: const Text('Don\'t have an account? Register'),
             )
           ],
         ),
@@ -94,4 +85,3 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-

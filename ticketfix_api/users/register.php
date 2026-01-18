@@ -1,14 +1,23 @@
 <?php
-include("ticketfix/config/db.php");
+include("../config/db.php");
 
-$username = $_POST['username'];
-$password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+$username = $_POST['username'] ?? '';
+$password = $_POST['password'] ?? '';
 
-$query = "INSERT INTO users (username, password)
-          VALUES ('$username', '$password')";
-
-if (mysqli_query($conn, $query)) {
-  echo json_encode(["success" => true]);
-} else {
-  echo json_encode(["success" => false]);
+if (empty($username) || empty($password)) {
+    echo json_encode(["success" => false, "message" => "Username and password required"]);
+    exit;
 }
+
+$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+$stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
+$stmt->bind_param("ss", $username, $hashed_password);
+
+if ($stmt->execute()) {
+  echo json_encode(["success" => true, "message" => "Registration successful"]);
+} else {
+  echo json_encode(["success" => false, "message" => "Registration failed: " . $stmt->error]);
+}
+
+$stmt->close();
