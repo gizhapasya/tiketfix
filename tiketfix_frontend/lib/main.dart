@@ -7,6 +7,8 @@ import 'package:tiketfix/presentation/pages/widgets/controllers/register_page.da
 import 'package:tiketfix/presentation/pages/transaction_history_page.dart';
 import 'package:tiketfix/presentation/pages/profile_page.dart';
 import 'package:tiketfix/presentation/pages/dashboard_page.dart';
+import 'package:tiketfix/presentation/pages/admin_scan_page.dart';
+
 
 
 
@@ -30,6 +32,7 @@ class TicketFixApp extends StatelessWidget {
         AppRoutes.transactions: (context) => const TransactionHistoryPage(),
         AppRoutes.profile: (context) => const ProfilePage(),
         AppRoutes.dashboard: (context) => const DashboardPage(),
+        AppRoutes.adminScan: (context) => const AdminScanPage(),
         AppRoutes.home: (context) => const HomePage(),
       },
     );

@@ -10,7 +10,7 @@ if (empty($username) || empty($password)) {
 }
 
 // Use prepared statement to prevent SQL injection
-$stmt = $conn->prepare("SELECT id, username, password FROM users WHERE username = ?");
+$stmt = $conn->prepare("SELECT id, username, password, role FROM users WHERE username = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -22,7 +22,8 @@ if ($row = $result->fetch_assoc()) {
             "message" => "Login successful",
             "data" => [
                 "id" => $row['id'],
-                "username" => $row['username']
+                "username" => $row['username'],
+                "role" => $row['role']
             ]
         ]);
     } else {

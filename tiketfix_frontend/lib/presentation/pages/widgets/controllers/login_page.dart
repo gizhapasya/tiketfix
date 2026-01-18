@@ -31,14 +31,29 @@ class _LoginPageState extends State<LoginPage> {
       if (result['success'] == true) {
         // Save username locally
         final prefs = await SharedPreferences.getInstance();
-        if (result['data'] != null && result['data']['username'] != null) {
-            await prefs.setString('username', result['data']['username']);
+        String role = 'user';
+
+        if (result['data'] != null) {
+            String? username = result['data']['username'];
+            if (username != null) await prefs.setString('username', username);
+            
+            if (result['data']['role'] != null) {
+               role = result['data']['role'];
+               await prefs.setString('role', role);
+            }
         }
         
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(result['message'] ?? 'Login Successful')),
         );
-        Navigator.pushReplacementNamed(context, AppRoutes.home);
+
+        if (!mounted) return;
+
+        if (role == 'admin') {
+           Navigator.pushReplacementNamed(context, '/admin_scan');
+        } else {
+           Navigator.pushReplacementNamed(context, AppRoutes.home);
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
