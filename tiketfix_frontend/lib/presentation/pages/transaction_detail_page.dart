@@ -66,7 +66,35 @@ class TransactionDetailPage extends StatelessWidget {
                         const SizedBox(height: 12),
                         _buildRow(Icons.attach_money, "Total Price", "Rp ${transaction.totalPrice}"),
                         const SizedBox(height: 12),
-                         _buildRow(Icons.numbers, "Order ID", "#${transaction.id}"),
+                        _buildRow(Icons.qr_code, "Ticket Code", transaction.code),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            const Icon(Icons.info, color: Colors.grey),
+                            const SizedBox(width: 12),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Status", style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                Container(
+                                  margin: const EdgeInsets.only(top: 4),
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: transaction.status == 'success' ? Colors.green[100] : Colors.orange[100],
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    transaction.status.toUpperCase(),
+                                    style: TextStyle(
+                                      color: transaction.status == 'success' ? Colors.green[800] : Colors.orange[800],
+                                      fontWeight: FontWeight.bold
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                         const SizedBox(height: 20),
                         // QR Code Placeholder
                         Center(

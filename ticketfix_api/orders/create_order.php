@@ -16,11 +16,14 @@ if (empty($movie_id) || empty($schedule_id) || empty($user_name) || empty($seats
     exit;
 }
 
-$stmt = $conn->prepare("INSERT INTO orders (movie_id, schedule_id, user_name, seats, total_price) VALUES (?, ?, ?, ?, ?)");
+// Generate unique ticket code (e.g., TIX-TIMESTAMP-RANDOM)
+$code = "TIX-" . time() . "-" . rand(1000, 9999);
+$status = "pending"; // Initial status is pending
+
+$stmt = $conn->prepare("INSERT INTO orders (movie_id, schedule_id, user_name, seats, total_price, code, status) VALUES (?, ?, ?, ?, ?, ?, ?)");
 // s for string, d for double/decimal, i for integer
-// movie_id (i), schedule_id (i), user_name (s), seats (s), total_price (d/s)
-// total_price in DB is decimal, bind as string is safer mostly if passed as string, or d
-$stmt->bind_param("iisss", $movie_id, $schedule_id, $user_name, $seats, $total_price);
+// movie_id (i), schedule_id (i), user_name (s), seats (s), total_price (d/s), code (s), status (s)
+$stmt->bind_param("iisssss", $movie_id, $schedule_id, $user_name, $seats, $total_price, $code, $status);
 
 if ($stmt->execute()) {
     echo json_encode(["success" => true, "message" => "Order placed successfully"]);

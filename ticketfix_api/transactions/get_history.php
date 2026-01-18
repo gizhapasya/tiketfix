@@ -10,7 +10,7 @@ if (empty($username)) {
 }
 
 $query = "
-    SELECT o.id, o.seats, o.total_price, o.order_date, m.title, m.poster_url, s.studio_name, s.start_time
+    SELECT o.id, o.seats, o.total_price, o.order_date, o.code, o.status, m.title, m.poster_url, s.studio_name, s.start_time
     FROM orders o
     JOIN movies m ON o.movie_id = m.id
     JOIN schedules s ON o.schedule_id = s.id
