@@ -3,6 +3,8 @@ import 'package:tiketfix/core/app_routes.dart';
 import '../../../../data/datasources/auth_remote_datasource.dart';
 
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -27,6 +29,12 @@ class _LoginPageState extends State<LoginPage> {
       if (!mounted) return;
 
       if (result['success'] == true) {
+        // Save username locally
+        final prefs = await SharedPreferences.getInstance();
+        if (result['data'] != null && result['data']['username'] != null) {
+            await prefs.setString('username', result['data']['username']);
+        }
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(result['message'] ?? 'Login Successful')),
         );

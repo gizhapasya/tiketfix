@@ -27,6 +27,13 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         actions: [
           IconButton(
+            icon: const Icon(Icons.receipt_long),
+            tooltip: 'My Tickets',
+            onPressed: () {
+               Navigator.pushNamed(context, '/transactions');
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/login');

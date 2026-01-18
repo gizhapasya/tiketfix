@@ -10,11 +10,23 @@ $user_name = $data['user_name'];
 $seats = $data['seats'];
 $total_price = $data['total_price'];
 
-$query = "INSERT INTO orders (movie_id, schedule_id, user_name, seats, total_price)
-          VALUES ('$movie_id', '$schedule_id', '$user_name', '$seats', '$total_price')";
-
-if (mysqli_query($conn, $query)) {
-  echo json_encode(["success" => true, "message" => "Tiket berhasil dipesan"]);
-} else {
-  echo json_encode(["success" => false, "message" => "Gagal memesan tiket"]);
+// Simple validation
+if (empty($movie_id) || empty($schedule_id) || empty($user_name) || empty($seats)) {
+    echo json_encode(["success" => false, "message" => "Incomplete data"]);
+    exit;
 }
+
+$stmt = $conn->prepare("INSERT INTO orders (movie_id, schedule_id, user_name, seats, total_price) VALUES (?, ?, ?, ?, ?)");
+// s for string, d for double/decimal, i for integer
+// movie_id (i), schedule_id (i), user_name (s), seats (s), total_price (d/s)
+// total_price in DB is decimal, bind as string is safer mostly if passed as string, or d
+$stmt->bind_param("iisss", $movie_id, $schedule_id, $user_name, $seats, $total_price);
+
+if ($stmt->execute()) {
+    echo json_encode(["success" => true, "message" => "Order placed successfully"]);
+} else {
+    echo json_encode(["success" => false, "message" => "Order failed: " . $stmt->error]);
+}
+
+$stmt->close();
+?>
