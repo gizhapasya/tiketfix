@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import '../../../../data/models/movie_model.dart';
+import '../../movie_detail_page.dart';
 
 class MovieCard extends StatelessWidget {
-  final String title;
-  final String genre;
+  final MovieModel movie;
 
   const MovieCard({
     super.key,
-    required this.title,
-    required this.genre,
+    required this.movie,
   });
 
   @override
@@ -22,11 +22,16 @@ class MovieCard extends StatelessWidget {
           color: Colors.grey[300],
           child: const Icon(Icons.movie),
         ),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(genre),
+        title: Text(movie.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(movie.genre),
         trailing: const Icon(Icons.arrow_forward_ios),
         onTap: () {
-          // Navigate to details if needed
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MovieDetailPage(movie: movie),
+            ),
+          );
         },
       ),
     );

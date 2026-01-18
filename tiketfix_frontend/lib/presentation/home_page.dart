@@ -1,8 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:tiketfix/data/datasources/movie_remote_datasource.dart';
 import 'package:tiketfix/presentation/pages/widgets/controllers/movie_card.dart';
+import '../data/models/movie_model.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late Future<List<MovieModel>> _moviesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _moviesFuture = MovieRemoteDataSource().getMovies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,23 +47,26 @@ class HomePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-
             Expanded(
-              child: ListView(
-                children: const [
-                  MovieCard(
-                    title: 'Avengers: End Game',
-                    genre: 'Action, Sci-Fi',
-                  ),
-                  MovieCard(
-                    title: 'Dilan 1990',
-                    genre: 'Romance',
-                  ),
-                  MovieCard(
-                    title: 'Pengabdi Setan',
-                    genre: 'Horror',
-                  ),
-                ],
+              child: FutureBuilder<List<MovieModel>>(
+                future: _moviesFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text("Error: ${snapshot.error}"));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text("No movies available"));
+                  }
+
+                  final movies = snapshot.data!;
+                  return ListView.builder(
+                    itemCount: movies.length,
+                    itemBuilder: (context, index) {
+                      return MovieCard(movie: movies[index]);
+                    },
+                  );
+                },
               ),
             ),
           ],
