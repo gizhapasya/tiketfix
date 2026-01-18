@@ -41,6 +41,13 @@ class _HomePageState extends State<HomePage> {
             },
           ),
           IconButton(
+            icon: const Icon(Icons.bar_chart),
+            tooltip: 'Statistics',
+            onPressed: () {
+               Navigator.pushNamed(context, '/dashboard');
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/login');

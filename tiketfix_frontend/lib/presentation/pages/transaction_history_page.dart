@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../data/datasources/order_remote_datasource.dart';
 import '../../data/models/transaction_model.dart';
+import 'transaction_detail_page.dart';
+
 
 class TransactionHistoryPage extends StatefulWidget {
   const TransactionHistoryPage({super.key});
@@ -43,26 +45,35 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
             itemCount: transactions.length,
             itemBuilder: (context, index) {
               final item = transactions[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(item.title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 8),
-                      Text("Studio: ${item.studioName} | ${item.startTime}"),
-                      Text("Seats: ${item.seats}"),
-                      const Divider(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(item.orderDate, style: const TextStyle(color: Colors.grey, fontSize: 12)),
-                          Text("Rp ${item.totalPrice}", style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
-                        ],
-                      )
-                    ],
+              
+              return GestureDetector(
+                onTap: () {
+                   Navigator.push(
+                     context, 
+                     MaterialPageRoute(builder: (context) => TransactionDetailPage(transaction: item))
+                   );
+                },
+                child: Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(item.title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        Text("Studio: ${item.studioName} | ${item.startTime}"),
+                        Text("Seats: ${item.seats}"),
+                        const Divider(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(item.orderDate, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                            Text("Rp ${item.totalPrice}", style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               );

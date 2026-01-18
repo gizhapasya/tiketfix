@@ -65,4 +65,29 @@ class OrderRemoteDataSource {
       throw Exception('History error: $e');
     }
   }
+
+  Future<Map<String, dynamic>> getDashboardStats() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final username = prefs.getString('username');
+      if (username == null) return {};
+
+      final response = await client.get(
+        Uri.parse('${ApiConstants.baseUrl}/transactions/dashboard_stats.php?username=$username'),
+      );
+
+      if (response.statusCode == 200) {
+         final Map<String, dynamic> responseData = json.decode(response.body);
+         if (responseData['success'] == true) {
+           return responseData['data'];
+         } else {
+           return {};
+         }
+      } else {
+        throw Exception('Failed to load stats');
+      }
+    } catch (e) {
+      throw Exception('Stats error: $e');
+    }
+  }
 }

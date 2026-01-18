@@ -6,6 +6,7 @@ class TransactionModel {
   final String seats;
   final double totalPrice;
   final String orderDate;
+  final String? posterUrl; // Make nullable or required
 
   TransactionModel({
     required this.id,
@@ -15,6 +16,7 @@ class TransactionModel {
     required this.seats,
     required this.totalPrice,
     required this.orderDate,
+    this.posterUrl,
   });
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class TransactionModel {
       seats: json['seats'],
       totalPrice: double.parse(json['total_price'].toString()),
       orderDate: json['order_date'],
+      posterUrl: json['poster_url'],
     );
   }
 }
