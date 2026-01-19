@@ -4,6 +4,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/datasources/auth_remote_datasource.dart';
 import '../../core/constants/api_constants.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_text_styles.dart';
+import '../widgets/custom_button.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -40,7 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       }
     } catch (e) {
-      // Handle error gently
+      // Handle error
     } finally {
       setState(() => _isLoading = false);
     }
@@ -50,7 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       final XFile? image = await _picker.pickImage(
         source: source,
-        maxWidth: 1024, // Resize to avoid huge uploads
+        maxWidth: 1024,
         maxHeight: 1024,
         imageQuality: 85,
       );
@@ -62,16 +65,15 @@ class _ProfilePageState extends State<ProfilePage> {
         if (!mounted) return;
 
         if (result['success'] == true) {
-           await _loadProfile(); // Await ensures state update before snackbar
-           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Profile picture updated!")));
+           await _loadProfile();
+           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Profile picture updated!", style: TextStyle(color: Colors.white)), backgroundColor: AppColors.success));
         } else {
-           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result['message'] ?? "Upload failed")));
+           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result['message'] ?? "Upload failed", style: const TextStyle(color: Colors.white)), backgroundColor: AppColors.error));
         }
       }
     } catch (e) {
        if (!mounted) return;
-       // Often generic error implies permission or path issue
-       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to pick image: $e")));
+       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to pick image: $e", style: const TextStyle(color: Colors.white)), backgroundColor: AppColors.error));
     } finally {
        if (mounted) setState(() => _isLoading = false);
     }
@@ -80,20 +82,21 @@ class _ProfilePageState extends State<ProfilePage> {
   void _showPickerOptions() {
     showModalBottomSheet(
       context: context,
+      backgroundColor: AppColors.surface,
       builder: (BuildContext bc) {
         return SafeArea(
           child: Wrap(
             children: <Widget>[
               ListTile(
-                  leading: const Icon(Icons.photo_library),
-                  title: const Text('Photo Library'),
+                  leading: const Icon(Icons.photo_library, color: AppColors.textPrimary),
+                  title: const Text('Photo Library', style: AppTextStyles.body),
                   onTap: () {
                     _pickImage(ImageSource.gallery);
                     Navigator.of(context).pop();
                   }),
               ListTile(
-                leading: const Icon(Icons.photo_camera),
-                title: const Text('Camera'),
+                leading: const Icon(Icons.photo_camera, color: AppColors.textPrimary),
+                title: const Text('Camera', style: AppTextStyles.body),
                 onTap: () {
                   _pickImage(ImageSource.camera);
                   Navigator.of(context).pop();
@@ -110,10 +113,6 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     String? fullImageUrl;
     if (_profilePicUrl != null && _profilePicUrl!.isNotEmpty) {
-      // If it's a relative path, prepend base url (remove 'ticketfix_api' part if needed, depends on how upload stores it)
-      // Upload stored: "uploads/profiles/..."
-      // BaseUrl: "http://10.10.10.211/ticketfix_api"
-      // Result: "http://10.10.10.211/ticketfix_api/uploads/profiles/..."
       fullImageUrl = "${ApiConstants.baseUrl}/$_profilePicUrl";
     }
 
@@ -121,33 +120,55 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(title: const Text("Profile")),
       body: Center(
         child: _isLoading 
-        ? const CircularProgressIndicator()
+        ? const CircularProgressIndicator(color: AppColors.primary)
         : Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               GestureDetector(
                 onTap: _showPickerOptions,
-                child: CircleAvatar(
-                  radius: 60,
-                  backgroundColor: Colors.grey[200],
-                  backgroundImage: fullImageUrl != null 
-                    ? NetworkImage(fullImageUrl) 
-                    : null,
-                  child: fullImageUrl == null 
-                    ? const Icon(Icons.person, size: 60, color: Colors.grey)
-                    : null,
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.primary, width: 3),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withOpacity(0.3),
+                        blurRadius: 15,
+                        spreadRadius: 2,
+                      )
+                    ]
+                  ),
+                  child: CircleAvatar(
+                    radius: 70,
+                    backgroundColor: AppColors.surface,
+                    backgroundImage: fullImageUrl != null 
+                      ? NetworkImage(fullImageUrl) 
+                      : null,
+                    child: fullImageUrl == null 
+                      ? const Icon(Icons.person, size: 70, color: Colors.grey)
+                      : null,
+                  ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               Text(
                 _username ?? "Guest",
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: AppTextStyles.h1,
               ),
               const SizedBox(height: 8),
-              TextButton.icon(
-                onPressed: _showPickerOptions,
-                icon: const Icon(Icons.camera_alt),
-                label: const Text("Change Profile Picture"),
+              Text(
+                "Movie Enthusiast",
+                style: AppTextStyles.bodySmall,
+              ),
+              const SizedBox(height: 48),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 48),
+                child: CustomButton(
+                  text: "Change Profile Picture",
+                  onPressed: _showPickerOptions,
+                  isOutlined: true,
+                ),
               ),
             ],
           ),

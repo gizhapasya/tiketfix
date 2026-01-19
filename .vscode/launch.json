@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "tiketfix_frontend",
+            "cwd": "tiketfix_frontend",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "tiketfix_frontend (profile mode)",
+            "cwd": "tiketfix_frontend",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "tiketfix_frontend (release mode)",
+            "cwd": "tiketfix_frontend",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}

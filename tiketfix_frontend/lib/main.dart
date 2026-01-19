@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tiketfix/core/app_routes.dart';
+import 'package:tiketfix/core/theme/app_theme.dart';
 import 'package:tiketfix/presentation/pages/widgets/controllers/login_page.dart';
 import 'package:tiketfix/presentation/home_page.dart';
 
@@ -25,6 +26,7 @@ class TicketFixApp extends StatelessWidget {
     return MaterialApp(
       title: 'TicketFix',
       debugShowCheckedModeBanner: false,
+      theme: AppTheme.darkTheme,
       initialRoute: AppRoutes.login,
       routes: {
         AppRoutes.login: (context) => const LoginPage(),

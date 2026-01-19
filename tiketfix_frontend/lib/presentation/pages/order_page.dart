@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../../data/models/movie_model.dart';
 import '../../data/models/schedule_model.dart';
 import '../../data/datasources/order_remote_datasource.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_text_styles.dart';
+import '../widgets/custom_button.dart';
 
 class OrderPage extends StatefulWidget {
   final MovieModel movie;
@@ -43,8 +46,9 @@ class _OrderPageState extends State<OrderPage> {
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: const Text("Success"),
-            content: const Text("Order placed successfully!"),
+            backgroundColor: AppColors.surface,
+            title: const Text("Success", style: AppTextStyles.h2),
+            content: const Text("Order placed successfully!", style: AppTextStyles.body),
             actions: [
               TextButton(
                 onPressed: () {
@@ -52,19 +56,19 @@ class _OrderPageState extends State<OrderPage> {
                   Navigator.pop(context); // Close Order Page
                   Navigator.pop(context); // Close Detail Page (optional, simplify flow)
                 },
-                child: const Text("OK"),
+                child: const Text("OK", style: TextStyle(color: AppColors.primary)),
               )
             ],
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text(result['message'] ?? "Order failed")),
+           SnackBar(content: Text(result['message'] ?? "Order failed", style: const TextStyle(color: Colors.white)), backgroundColor: AppColors.error),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(content: Text("Error: $e")),
+         SnackBar(content: Text("Error: $e", style: const TextStyle(color: Colors.white)), backgroundColor: AppColors.error),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -76,40 +80,87 @@ class _OrderPageState extends State<OrderPage> {
     return Scaffold(
       appBar: AppBar(title: const Text("Order Ticket")),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.movie.title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            Text("Schedule: ${widget.schedule.startTime}"),
-            Text("Studio: ${widget.schedule.studioName}"),
-            Text("Price per ticket: Rp ${widget.schedule.price}"),
-            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white10),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(widget.movie.title, style: AppTextStyles.h1.copyWith(fontSize: 22)),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      const Icon(Icons.calendar_today, color: Colors.grey, size: 16),
+                      const SizedBox(width: 8),
+                      Text("Schedule: ${widget.schedule.startTime}", style: AppTextStyles.body),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on, color: Colors.grey, size: 16),
+                      const SizedBox(width: 8),
+                      Text("Studio: ${widget.schedule.studioName}", style: AppTextStyles.body),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Icon(Icons.attach_money, color: Colors.grey, size: 16),
+                      const SizedBox(width: 8),
+                      Text("Price: Rp ${widget.schedule.price}", style: AppTextStyles.body),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
+            Text("Select Tickets", style: AppTextStyles.h2),
+            const SizedBox(height: 16),
             Row(
               children: [
-                const Text("Tickets: ", style: TextStyle(fontSize: 18)),
                 IconButton(
                   onPressed: _selectedSeatCount > 1 ? () => setState(() => _selectedSeatCount--) : null,
-                  icon: const Icon(Icons.remove_circle),
+                  icon: const Icon(Icons.remove_circle, color: AppColors.primary, size: 32),
                 ),
-                Text("$_selectedSeatCount", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text("$_selectedSeatCount", style: AppTextStyles.h1),
+                ),
                 IconButton(
                   onPressed: () => setState(() => _selectedSeatCount++),
-                  icon: const Icon(Icons.add_circle),
+                  icon: const Icon(Icons.add_circle, color: AppColors.primary, size: 32),
                 ),
               ],
             ),
-            const SizedBox(height: 24),
-            Text("Total: Rp $_totalPrice", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue)),
+            const SizedBox(height: 32),
+            const Divider(color: Colors.white24),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("Total Payment", style: AppTextStyles.body),
+                Text("Rp $_totalPrice", style: AppTextStyles.h1.copyWith(color: AppColors.success)),
+              ],
+            ),
             const Spacer(),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _processOrder,
-                child: _isLoading ? const CircularProgressIndicator() : const Text("Confirm Order"),
-              ),
+            CustomButton(
+              text: "Confirm Order",
+              onPressed: _processOrder,
+              isLoading: _isLoading,
             ),
           ],
         ),
