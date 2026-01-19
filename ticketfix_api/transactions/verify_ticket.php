@@ -16,17 +16,19 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($row = $result->fetch_assoc()) {
-    if ($row['status'] == 'success') {
+    if ($row['status'] == 'completed') {
          echo json_encode(["success" => false, "message" => "Ticket already used/verified"]);
-    } else {
-         // Update to success
-         $update = $conn->prepare("UPDATE orders SET status = 'success' WHERE id = ?");
+    } else if ($row['status'] == 'success') {
+         // Update to completed
+         $update = $conn->prepare("UPDATE orders SET status = 'completed' WHERE id = ?");
          $update->bind_param("i", $row['id']);
          if ($update->execute()) {
-             echo json_encode(["success" => true, "message" => "Ticket verified successfully!"]);
+             echo json_encode(["success" => true, "message" => "Ticket verified! Status updated to Completed."]);
          } else {
              echo json_encode(["success" => false, "message" => "Update failed"]);
          }
+    } else {
+         echo json_encode(["success" => false, "message" => "Ticket not paid or invalid status: " . $row['status']]);
     }
 } else {
     echo json_encode(["success" => false, "message" => "Invalid ticket code"]);
